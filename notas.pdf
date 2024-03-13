@@ -1,0 +1,249 @@
+Node
+
+Que es Node?
+  Es un ambiente de ejecucion para ejecutar Javascript en un sitio que no sea el navegador
+
+Que lo hace especial?
+  Codigo abierto
+  Asincronico
+  Modulos nativos y de terceros
+  NPM
+  Construccion de svs
+  Multiplataforma
+
+Se ejecuta en modo no bloqueante (muchas peticiones sin necesidad de bloquear el sv)
+
+NPM: gestor de packetes y puedes ejecutarlo sin instalarlos con NPX
+
+Blocking Non-Blocking I/O
+  Blocking: codigo JavaScript ejecutado linea por linea y cuando llega una operacion que no es
+  de js necesita esperar hasta que esta termine para continuar
+   Ejemplo:
+    const data = fs.readFileSync("/file.md");
+    console.log(data)
+  En este ejemplo se necesita leer el archivo entero para poder pasar a la linea del console
+
+  Non-Blocking: metodos para evitar lo anterior.
+
+Normalente cuando usaos node estamos relacionados al area de back3end con creacion de
+ herraientas eficientes
+como webpack, bit, o erramientas para crear svs como comunicacion por web sockets 
+graphq1lendpoints, crear nuestro file system
+
+
+UNIDAD 1:
+
+Idealmente cuando se trabaja con node es estructurar y modificar el file system
+entonces hay que tener cuidado con las cosas que uno toca (le da el poder a js de acceder
+a filesystem)
+
+Code execution: 
+  El event loop decide que se ejecuta primero y que despues
+  Javascript es blocking y single-threaded (exceptuando las promesas).
+
+  Hay 3 componentes principales en Node:
+  1 - JS library
+  2 - C/C++ features
+  3 - Dependencies
+
+  libuv hace que node pueda hacer tareas asyncronas.
+
+  Se ejecuta lo sincrono en secuencia y lo asincrono (callbacks) va a que sea manejado por lituv
+  Todo lo que entra a lituv entra en una cola FIFO
+
+Event Loop:
+  Toma de la cola de tareas proporcionada por libuv los eventos que decide ejecutar.
+  Hay una serie de reglas que el event loop utliza para elegir un evento por sobre otro
+  1. Callbacks en microtasks
+  2. Callbacks en timer queue
+  3. Callbacks en microtask queue
+  4. Callbacks de I/o
+  5. Callbacks en el microtask queue se ejecutan y luego promise queue
+  6. Todos los callbacks en el check queue
+  7. Todos los callbacks en el close queue
+
+  Los callbacks solo son ejecutados cuando el callstack esta vacio.
+
+  UNIDAD 2:
+    una vez creado el proyecto hay que ver que estrctura de fs hay que usar.
+    Una manera es crear un nuevo directorio src donde la app va a vivir dentro de ese 
+    directorio.
+  Por que hay veces que se usa npm directo y otra veces es npm run?
+    el start es el unico que no necesita el run por que es comando especial
+
+    El process me da mucha informacion de los procesos
+
+UNIDAD 3 Desarrollo con Node / JS fundation: 
+  Package.json: estan los scripts, las dependencias y otras cosas, podemos crear scripts que
+  corran nuestra terminal (start: node app.js, dev: 'nodemon app.js'). El start no necesita
+  la palabra run antes de usar el script por que es especial.
+
+  Importaciones: se realizan con require('ruta/de/acceso'). Podes destructurar usando {}
+  Exportaciones: se realizan con module.exports = { modulo_a_exportar, etc}
+
+  Nodemon: es un paquete que permite la ejecucion automatica del programa a cualquier cambio
+
+  Variables de entorno: se encuentran en process, donde podes encontrar muchas (generalmente
+  estan en MAYUSCULA)
+
+  Callbacks: iMPORTANTE se usa mucho en Node. Son funciones que entran como parametro a otras
+  funciones.
+
+  Arrow Functions: manera mas legible de escribir funciones. const funcion_ej = (par1,par2) => {}
+
+  Factory functions: fundamental para implementar arquitecturas para que sea tolerante a cambios
+  expandible, etc. Todo esto parte de las factory function. Un factory function es una funcion_ej
+  que cre otra funcion.
+
+  *Problemas con los paquetes de terceros. Si se dejan utilizar en le proyecto necesitamos
+  cambiar todas las dependencias asociadas.* -> para evitar eso podemos usar el patron
+  adaptador. Para implementar esto se usan las factory functions.
+
+  Patron adaptador: para trabajar con dependencias de terceros se utiliza una capa que creas tu
+  propio codigo que adapta y utiliza el codigo de los paquetes de terceros para solo renovarlo
+  en la capa. Usamos el directorio plugins para usar de capa. donde dentro se puede hacer un archivo
+  index.js donde usamos como archivo de barril.
+
+  De todas maneras no tendriamos que tener dependencias en general en nuestros archivos. AHORA es cuando
+  entran las factory functions.
+
+  Patron de funciones factory: la idea es que cuando se utilice la funcion se mande la forma de como
+  se realizan las dependencias de terceros (se puede ver como la ENTIDAD en otros patrones de diseño)
+  Ej:
+  const buildMakePerson = ({ getUUID, getAge }) => {
+    return ({ name, birthdate }) => {
+        return {
+            id: getUUID(),
+            name: name,
+            birthdate: birthdate,
+            age: getAge(birthdate)
+        }
+    }
+  } 
+
+  donde si se utiliza: 
+const { buildMakePerson } = require('./js-fundation/05-factory')
+const { getAge, getUUID } = require('./plugins')
+
+const makePerson = buildMakePerson({getAge, getUUID})
+
+const obj = { name: 'Agustin', birthdate: '1999-05-11'}
+
+const agustin = makePerson(obj)
+
+makePerson seria una funcion que recibe como parametros el objeto y ya las dependencias externas no
+existirian
+
+En conclusion aplicar el patron adaptador ayuda a evitar altamente acoplado el codigo con dependencias
+de terceros, aplicarlo da facilidad para la expansion y hacer nuevas modificaciones.
+
+Promesas: Son objetos que representan la finalizacion o fracaso de una operacion asincronica. Para evitar\
+el callback hell.
+
+  Las promesas te "prometen" un resultado. Es un objecto que funciona de enlace entre el codigo Productor (demora tiempo)
+  y Consumidor (espera a resultado). 
+
+      let myPromise = new Promise(function(myResolve, myReject) {
+      // "Producing Code" (May take some time)
+
+        myResolve(); // when successful
+        myReject();  // when error
+      });
+
+      // "Consuming Code" (Must wait for a fulfilled Promise)
+      myPromise.then(
+        function(value) { /* code if successful */ },
+        function(error) { /* code if some error */ }
+      );
+
+  Poseen tres estados: pending, fulfilled y rejected.
+
+  Consumir una promesa: then (manjea el exito), catch(maneja el error), finally.
+  
+  En el ejemplo que estuvimos viendo:
+      
+      const getPokemonById = (id) => {
+        const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
+        return fetch( url )
+        .then(( resp ) => resp.json())
+        .then(( pokemon ) => pokemon.name )
+    }
+  el metodo fetch() devuelve una promesa (resolve, rejected) entonces luego se consume con el .then
+    seria lo mismo hacer:
+
+      const getPokemonById = (id) => {
+        return new Promise((resolve, rejected) => {
+          setTimeout(() => {
+            const pokemonData = {id: id, name:'Charmander'};
+            resolve(pokemonData)
+          }, 4000);
+        })
+      }
+
+      getPokemonById(4)
+        .then((pokemon) => console.log(pokemon.name))
+        .catch((error) => console.error('Error:', error));
+
+Async/Await: cada vez que se usa async transforma el retorno de una funcion en una promesa. El await
+es un codigo bloqueante que no permite que el codigo siga hasta que resuelva esa linea. 
+  Si queremos generar una ruta de error se maneja en el catch.
+
+Utilizando el patron adaptador para utilizar axios: puede pasar que nos pidan agregar un header, cookies,
+entre osas cosas.
+Vamos a crear un wrap que envuelva la funcion de fetchAPI.
+    const httpClientPlugin = {
+      get: async(url) => {
+          const resp = await fetch( url )
+          return await resp.json();
+      },
+    }
+
+Hay que evitar el uso excesivo a paquetes por que es un gateway a terceros a entrar a nuestro sistema
+es por esto.
+
+
+UNIDAD 4 - BASES DE MODE + TYPESCRIPT
+
+Una vez subido el repo a github vamos a ver gitignore y vamos a notar que el node_modules no existe
+En si son necesarios los modulos de node pero no es necesario en git, ya que es codigo que puede ser
+generado a partir de packege.json y package-lock.
+
+gitignore: dice que archivos o directorios yo no quiero darle seguimiento, ya que se pueden autogenerar
+o puedo obviarlos (archivos de sistema, etc). 
+
+Una vez clonado el repo necesitamos instalar las dependencias de desarrollador. Ya que estas dependencias
+son necesarias para ejecutar el proyecto. Para instalar TODAS las dependencias se puede hacer con
+  npm install 
+
+Es importante que el node_modules siempre sea generado ya que uno no mantiene esos archivos actualizados.
+
+Node Logger: cuando uno esta creando un backend puede pasar que algo no sale como esperabas, y es muy 
+dificil tener un seguimiento de estos errores por logs. Para solucionar esto se usa el logger
+
+Winston logger: paquete de terceros que nos ayuda a trabajar los logs. Tiene muchas funcionalidades 
+pero una de las mas importantes es transports. *se puede ver mas acerca de esta libreria*
+  Al ser una libreria de terceros debemos envolverla para cumplir con el patron adaptador de esta manera:
+  
+    module.exports = function buildLogger(service) {
+      return {
+          log: (message) => {
+              logger.log( 'info', {message, service} ); usamos estos params objetos para que se impriman de esa forma
+
+          }
+      }
+  }
+
+  donde usamos log: para asemejarse con la sintaxis de console.log()
+
+  se utiliza el logger de la siguiente manera: se exporta y se importa en el archivo donde lo queremos usar
+  en nuestro caso el app.js
+
+  luego construimos el logger mandandole el servicio a mandar (en este caso app.js)
+  una vez llamado el logger.log va a crear dos archivos, el error y el combined.
+  el combined va a tener todos los logs y el error solo los de errores.
+
+  Algo primordial en los logs es registrar la hora de que paso, y es mejor podes crearlos en la buildLogger
+  y monitorearlos desde ahi.
+  La manera de agregar el time es via winston agregando el timestamp con
+  const { combine, timestamp, json } = winston.format;
+
