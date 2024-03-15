@@ -1,6 +1,9 @@
-import { yarg as argv } from './config/plugins/yargs.plugin'
+import { yarg } from "./config/plugins/yargs.plugin"
 
-console.log(process.argv)
+(async() => {
+    await main();
+})();
 
-console.log(argv)
-
+async function main() {
+    console.log( yarg )
+}
