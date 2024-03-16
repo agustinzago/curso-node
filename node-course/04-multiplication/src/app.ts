@@ -6,6 +6,6 @@ import { ServerApp } from './presentation/server-app';
 })();
 
 async function main() {
-    const {  b:base, l:limit, s:show } = yarg
+    const {  b:base , l:limit, s:show} = yarg
     ServerApp.run({ base, limit, show: Boolean(show) }); // Ensure show is always of type boolean
 }

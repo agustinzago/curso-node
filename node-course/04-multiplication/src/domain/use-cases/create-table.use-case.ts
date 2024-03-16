@@ -14,7 +14,7 @@ export class CreateTable implements CreateTableUseCase{
          *  DI - Dependency Injection
          */
     ){}
-    
+
     execute({ base, limit = 10 }: CreateTableOptions){
         let table = ''
         for (let i = 1; i < limit+1; i++){
