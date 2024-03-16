@@ -13,10 +13,7 @@ const header = (): string => {
 
 const multiplier = (limit: number, base:number): string => {
     let table = '';
-    for (let i = 1; i < limit+1; i++){
-        const result = base*i
-        table += `${base} x ${i} = ${result}\n`
-    }
+
     return table
 }
 
