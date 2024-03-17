@@ -17,7 +17,7 @@ export class SaveFile implements SaveFileUseCase{
          */
     ){}
 
-    execute({ fileContent, fileDestination = 'outputs', fileName = 'table'}: SaveFileOptions): boolean {
+    execute({ fileContent, fileDestination = 'outputs', fileName = 'multiplication-table'}: SaveFileOptions): boolean {
         try {
             fs.mkdirSync(fileDestination, {recursive: true})
             fs.writeFileSync(`${fileDestination}/${fileName}.txt`, fileContent );
