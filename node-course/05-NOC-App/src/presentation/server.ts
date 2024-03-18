@@ -1,27 +1,18 @@
+import { CheckService } from '../domain/use-cases/checks/check-service';
 import { CronService } from './cron/cron-service'
 
 export class Server {
     public static start() {
         console.log('Server started...')
+        const url = 'https://google.com'
         CronService.createJob(
             '*/5 * * * * *',
             () => {
-                const date = new Date()
-                console.log('5 seconds', date)
-            }
-        );
-        CronService.createJob(
-            '*/2 * * * * *',
-            () => {
-                const date = new Date()
-                console.log('2 seconds', date)
-            }
-        );
-        CronService.createJob(
-            '*/3 * * * * *',
-            () => {
-                const date = new Date()
-                console.log('3 seconds', date)
+                new CheckService(
+                    () => console.log( `${url} is ok` ),
+                    ( error ) => console.log( error )
+                ).execute( 'https://google.com')
+                // new CheckService().execute( 'http://localhost:3000')
             }
         );
     }
