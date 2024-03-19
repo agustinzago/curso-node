@@ -21,3 +21,6 @@
 {"message":"https://godsadsadsadsaadogle.com is not ok. TypeError: fetch failed","level":"high","createdAt":"2024-03-18T02:52:55.005Z"}
 {"message":"https://godsadsadsadsaadogle.com is not ok. TypeError: fetch failed","level":"high","createdAt":"2024-03-18T02:53:00.005Z"}
 {"message":"https://godsadsadsadsaadogle.com is not ok. TypeError: fetch failed","level":"high","createdAt":"2024-03-18T02:53:05.004Z"}
+{"message":"Service https://google.com working","level":"low","createdAt":"2024-03-18T12:47:15.444Z"}
+{"message":"Service https://google.com working","level":"low","createdAt":"2024-03-18T12:47:20.154Z"}
+{"message":"Email sent","level":"low","createdAt":"2024-03-19T00:27:22.101Z","origin":"email.service.ts"}
