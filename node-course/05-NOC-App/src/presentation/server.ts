@@ -2,6 +2,7 @@ import { envs } from '../config/plugins/envs.plugin';
 import { CheckService } from '../domain/use-cases/checks/check-service';
 import { FileSystemDatasource } from '../infraestructure/datasources/file-system.datasource';
 import { MongoLogDataSource } from '../infraestructure/datasources/mongo.datasource';
+import { PostgresDataSource } from '../infraestructure/datasources/postgres.datasource';
 import { LogRepositoryImpl } from '../infraestructure/repositories/log.repository.impl';
 import { CronService } from './cron/cron-service'
 import { EmailService } from './email/email.service';
@@ -9,7 +10,8 @@ import { EmailService } from './email/email.service';
 
 const logRepository = new LogRepositoryImpl(
     // new FileSystemDatasource()
-    new MongoLogDataSource()
+    // new MongoLogDataSource()
+    new PostgresDataSource()
 );
 
 export class Server {
