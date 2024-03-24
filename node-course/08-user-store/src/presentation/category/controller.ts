@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { CustomError, RegisterUserDto } from '../../domain';
-import { AuthService } from '../services/auth.service';
-import { LoginUserDto } from '../../domain/dtos/auth/login-user.dto';
 import { CreateCategoryDto } from '../../domain/dtos/category/create-category.dto';
+import { CategoryService } from '../services/category.service';
+import { PaginationDto } from '../../domain/dtos/shared/pagination.dto';
 
 
 export class CategoryController {
 
     constructor(
+        private readonly categoryService: CategoryService
     ){}
 
     private handleError = (error: unknown, res: Response) => {
@@ -21,10 +22,19 @@ export class CategoryController {
     createCategory = async(req: Request, res: Response) => {
         const [error, createCategoryDto] = CreateCategoryDto.create(req.body)
         if (error) return res.status(400).json({ error: 'Bad request'})
-        res.json(createCategoryDto)
+        this.categoryService.createCategory(createCategoryDto!, req.body.user)
+            .then( category => res.status(201).json( category))
+            .catch( error => this.handleError(error, res))
     }
 
     getCategories = async(req: Request, res: Response) => {
-        res.json('Get categories')
+
+        const {page = 1, limit = 10} = req.query
+
+        const [error, paginationDto] = PaginationDto.create(+page, +limit)
+        if (error) return res.status(400).json({ error: 'Bad request'})
+
+        this.categoryService.getCategories(paginationDto!)
+            .then( categories => res.status(201).json(categories))
     }
-}
+} 
