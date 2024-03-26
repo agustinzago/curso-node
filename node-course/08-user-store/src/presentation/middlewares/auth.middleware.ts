@@ -8,7 +8,7 @@ export class AuthMiddleware {
 
     static async validateJWT(req: Request, res: Response, next: NextFunction) {
         const authorization = req.header('Authorization');
-        if ( !authorization ) return res.status(401).json({ error: 'No token provided' })
+        if ( !authorization ) return res.status(401).json({ error: 'Token not provided' })
         if (!authorization.startsWith('Bearer ')) return res.status(401).json({error: 'Invalid bearer token'})
 
         const token = authorization.split(' ').at(1) || '';
